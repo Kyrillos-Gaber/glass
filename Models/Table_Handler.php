@@ -19,12 +19,24 @@ Class Table_Handler implements Db
   public function select_record_by_id($id)
   {
     $query = "SELECT * FROM `{$this->table}` WHERE `id` = {$id}";
-    $result = mysqli_query($this->link, $query);
-    return mysqli_fetch_array($result) ;
+    return $this->query($query);
   }
 
-  public function select_records($start, $length)
+  public function select_records($start)
   {
-    
+    $query = "SELECT * FROM `{$this->table}` LIMIT " . $start . "," . REC_PER_PAGE;
+    return $this->query($query);
+  }
+
+  private function query($sql) 
+  {
+    $result = mysqli_query($this->link, $sql);
+    $res = array();
+    while($row = mysqli_fetch_array($result))
+    {
+      $res [] = $row;
+    }
+    if (count($res) === 1) return $res[0];
+    else return $res;
   }
 }
